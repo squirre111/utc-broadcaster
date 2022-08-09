@@ -9,7 +9,7 @@
 Согласно заданию, для сборки используется CMake. Для удобства использования представлен скрипт `build_and_test.sh` который собирает проект и выполняет тесты
 
 ```
-git clone git@github.com:squirre111/utc-broadcaster.git
+git clone git@github.com:squirre111/utc-broadcaster.git --recurse-submodules
 cd utc-broadcaster
 bash build_and_test.sh
 ```
