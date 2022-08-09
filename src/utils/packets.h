@@ -22,7 +22,9 @@ public:
 	const uint8_t *Data() const override { return data_; }
 	size_t Size() const override { return N; }
     
-    void SetData(const void *data, size_t len) override { if (len == N) memcpy(data_, data, N); }
+    void SetData(const void *data, size_t len) override {
+        if (len == N) memcpy(data_, data, N);
+    }
 	
 private:
 	uint8_t data_[N];
@@ -36,8 +38,7 @@ public:
 	
 	const uint8_t *Data() const override { return data_; }
 	size_t Size() const override { return size_; }
-
-    // @see #2
+    
     void SetData(const void *data, size_t len) override {
         free(data_);
         data_ = static_cast<uint8_t *>(calloc(1, len));

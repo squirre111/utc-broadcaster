@@ -67,6 +67,6 @@ ssize_t UDP::RecvFrom(Socket &socket, Packet &packet)
     int flags = 0;
     static char mesg[MAX_UDP_SIZE];
     ssize_t n = recvfrom(socket.FD(), mesg, MAX_UDP_SIZE, flags, NULL, NULL);
-    packet.SetData(mesg, n); // @see #4
+    packet.SetData(mesg, n);
     return n;
 }

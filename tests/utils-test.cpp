@@ -153,7 +153,5 @@ TEST(UtilsTest, UDPSendTest)
         auto len = UDP::SendTo(socket, addr, packet);
         EXPECT_EQ (packet.Size(), str.size());
         EXPECT_EQ (len, packet.Size());
-
-        // @see #4 recvfrom
     }
 }

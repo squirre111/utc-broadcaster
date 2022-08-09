@@ -52,7 +52,6 @@ int main(int argc, char **argv)
     std::cout << "Broadcast timeout: " << timeout << std::endl;
     std::cout << "Broadcast type: " << BroadcastType2String(type) << std::endl;
 
-    // @see #1
     std::unique_ptr<Runnable> broadcaster = BroadcastFactory(type, port, timeout);
 
     std::cout << "Broadcast start!" << std::endl;
