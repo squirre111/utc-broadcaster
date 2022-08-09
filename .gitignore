@@ -1,32 +1,23 @@
-# Prerequisites
-*.d
 
-# Compiled Object files
+
+# Emacs temporary files
+\#*
+*~
+\.\#*
+
+# C++ temporary files
+*.gch
+*.exe
+
+# C++ objects and libs
 *.slo
 *.lo
 *.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
 *.a
-*.lib
+*.la
+*.lai
+*.so
+*.dll
+*.dylib
 
-# Executables
-*.exe
-*.out
-*.app
+build*
