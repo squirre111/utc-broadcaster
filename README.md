@@ -14,6 +14,11 @@ cd utc-broadcaster
 bash build_and_test.sh
 ```
 
+![Процесс сборки](https://github.com/squirre111/utc-broadcaster/raw/main/doc/make.gif)
+
+
+Все подпроекты собраны с максимально строгим набором флагов: **-Wall -Wextra -Wpedantic -Werror**
+
 ## Структура проекта
 
 ```
