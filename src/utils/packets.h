@@ -6,6 +6,9 @@
 #include <cstring>
 
 
+/**
+   Абстрактный пакет отправляемый по сети
+*/
 class Packet {
 
 public:
@@ -15,6 +18,9 @@ public:
 };
 
 
+/**
+   Пакет фиксированного размера, выделяет память на стеке
+*/
 template<int N>
 class FixedPacket : public Packet {
 	
@@ -31,6 +37,11 @@ private:
 };
 
 
+/**
+   Пакет произвольного размера, выделяет память в куче
+
+   Представлен для демонстрации
+*/
 class DynamicPacket : public Packet {
 	
 public:
@@ -44,6 +55,9 @@ public:
         data_ = static_cast<uint8_t *>(calloc(1, len));
         memcpy(data_, data, len);
         size_ = len;
+    }
+    ~DynamicPacket() {
+        free(data_);
     }
 	
 private:

@@ -16,6 +16,7 @@ public:
         sock_.Bind(addr_);
     }
     
+    /** Функция для вызова из main(), основной обработчик */
     int Run() {
         
         FixedPacket<sizeof(SystemClock::ms_size)> packet;

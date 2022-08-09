@@ -4,13 +4,18 @@
 #include "sock_addr.h"
 #include "factories.h"
 
-
+/**
+   Интерфейс приложения
+*/
 class Runnable {
 public:
     virtual int Run() = 0;
 };
 
 
+/**
+   Основной класс приложения, поддерживает работу с различными фабриками из factories.h
+*/
 template<typename T = TimestampFactory>
 class Broadcaster : public T, public Runnable {
 
@@ -22,7 +27,8 @@ public:
     {
         sock_.AllowBroadcast();
     }
-    
+
+    /** Функция для вызова из main(), основной цикл обработки */
     int Run() override {
         while(1) {
             SystemClock::SleepMS(timeout_);
@@ -31,11 +37,13 @@ public:
         return EXIT_SUCCESS;
     }
 
+    /** Отправить одну датаграмму */
     void Broadcast() {
         auto packet = T::BuildPacket();
         SendPacket(packet.get());
     }
 
+    /** Отправить произвольный пакет */
     void SendPacket(Packet *packet) {
         UDP::SendTo(sock_, addr_, *packet);
     }
