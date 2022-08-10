@@ -55,14 +55,14 @@ UDP::Socket::~Socket()
 }
 
 
-ssize_t UDP::SendTo(Socket &socket, SockAddr &sa, Packet &packet)
+ssize_t UDP::SendTo(const Socket &socket, const SockAddr &sa, Packet &packet)
 {
     int flags = 0;
     return sendto(socket.FD(), packet.Data(), packet.Size(), flags, sa.Addr(), sa.AddrLen());
 }
 
 
-ssize_t UDP::RecvFrom(Socket &socket, Packet &packet)
+ssize_t UDP::RecvFrom(const Socket &socket, Packet &packet)
 {
     int flags = 0;
     static char mesg[MAX_UDP_SIZE];

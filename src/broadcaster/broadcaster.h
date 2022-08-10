@@ -7,7 +7,7 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
-		
+        
 
 
 /**
@@ -63,14 +63,14 @@ public:
     }
 
     /** Отправка одной датаграммы */
-    void Broadcast() {
+    void Broadcast() const {
         auto packet = T::BuildPacket();
         SendPacket(packet.get());
         SystemClock::SleepMS(1800);
     }
 
     /** Отправка произвольного пакета */
-    void SendPacket(Packet *packet) {
+    void SendPacket(Packet *packet) const {
         UDP::SendTo(sock_, addr_, *packet);
     }
     
@@ -82,9 +82,9 @@ private:
     SockAddr addr_;
     UDP::Socket sock_;
     size_t timeout_;
-
+    
     std::thread t_;
     std::mutex m_;
-	std::condition_variable cv_;
+    std::condition_variable cv_;
     bool wakeup_;
 };

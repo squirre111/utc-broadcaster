@@ -34,9 +34,9 @@ namespace UDP {
     };
 
     /** Отправка данных по UDP */
-    ssize_t SendTo(Socket &sock, SockAddr &sa, Packet &packet);
+    ssize_t SendTo(const Socket &sock, const SockAddr &sa, Packet &packet);
 
     /** Получение данных по UDP */
-    ssize_t RecvFrom(Socket &sock, Packet &packet);
+    ssize_t RecvFrom(const Socket &sock, Packet &packet);
 }
 
