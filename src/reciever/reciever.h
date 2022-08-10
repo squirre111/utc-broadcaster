@@ -37,12 +37,8 @@ public:
         return std::to_string(currentMs) + " " + std::to_string(packetMs) + 
             " " + std::to_string(diff);
     }
-
-    //     return std::to_string(current) + " " 
-    //                   << packetMs << " " 
-    //                   << diff << std::endl;
-    // }
-
+    
+    
     bool GetPacket(Packet *packet) {
         size_t len = UDP::RecvFrom(sock_, packet);
         return len == packet->Size();
