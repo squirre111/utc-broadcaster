@@ -55,18 +55,18 @@ UDP::Socket::~Socket()
 }
 
 
-ssize_t UDP::SendTo(const Socket &socket, const SockAddr &sa, Packet &packet)
+ssize_t UDP::SendTo(const Socket &socket, const SockAddr &sa, Packet *packet)
 {
     int flags = 0;
-    return sendto(socket.FD(), packet.Data(), packet.Size(), flags, sa.Addr(), sa.AddrLen());
+    return sendto(socket.FD(), packet->Data(), packet->Size(), flags, sa.Addr(), sa.AddrLen());
 }
 
 
-ssize_t UDP::RecvFrom(const Socket &socket, Packet &packet)
+ssize_t UDP::RecvFrom(const Socket &socket, Packet *packet)
 {
     int flags = 0;
     static char mesg[MAX_UDP_SIZE];
     ssize_t n = recvfrom(socket.FD(), mesg, MAX_UDP_SIZE, flags, NULL, NULL);
-    packet.SetData(mesg, n);
+    packet->SetData(mesg, n);
     return n;
 }

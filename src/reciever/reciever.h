@@ -22,7 +22,7 @@ public:
         FixedPacket<sizeof(SystemClock::ms_size)> packet;
         
         while(1) {
-            size_t len = UDP::RecvFrom(sock_, packet);
+            size_t len = UDP::RecvFrom(sock_, &packet);
             if (len == packet.Size()) {
                 auto currentMs = SystemClock::GetMS();
                 auto packetMs = TimestampFactory::ParsePacket(&packet);

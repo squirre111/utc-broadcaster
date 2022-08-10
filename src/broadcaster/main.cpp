@@ -1,4 +1,5 @@
 #include <iostream>
+#include <csignal>
 
 #include <unistd.h>
 
@@ -12,11 +13,15 @@ enum class BroadcastType {
 
 };
 
-std::unique_ptr<Runnable> BroadcastFactory(BroadcastType type, int port, int timeout);
+Runnable *BroadcastFactory(BroadcastType type, int port, int timeout);
 std::string BroadcastType2String(BroadcastType type);
 int PrintHelp(char *argv0);
 
+void SIGUSR1_handler(int);
+void SIGUSR2_handler(int);
+void atexit_handler();
 
+Runnable *broadcaster = nullptr;
 
 int main(int argc, char **argv)
 {
@@ -52,37 +57,41 @@ int main(int argc, char **argv)
     std::cout << "Broadcast timeout: " << timeout << std::endl;
     std::cout << "Broadcast type: " << BroadcastType2String(type) << std::endl;
 
-    std::unique_ptr<Runnable> broadcaster = BroadcastFactory(type, port, timeout);
+    broadcaster = BroadcastFactory(type, port, timeout);
+
+    std::atexit(atexit_handler);
+    std::signal(SIGUSR1, SIGUSR1_handler);
+    std::signal(SIGUSR2, SIGUSR2_handler);
 
     std::cout << "Broadcast start!" << std::endl;
-    return broadcaster->Run();
+    broadcaster->Run();
+    
+    while(1);
+    
+    return EXIT_SUCCESS;
 }
 
 
-std::unique_ptr<Runnable> BroadcastFactory(BroadcastType type, int port, int timeout)
+Runnable* BroadcastFactory(BroadcastType type, int port, int timeout)
 {
-    std::unique_ptr<Runnable> res;
-    
     switch (type) {
-        
     case BroadcastType::String:
-        res.reset(new Broadcaster<TimestampStringFactory>(port, timeout));
+        return new Broadcaster<TimestampStringFactory>(port, timeout);
         break;
         
     case BroadcastType::Foobar:
         {
             Broadcaster<ConstFactory> *b = new Broadcaster<ConstFactory>(port, timeout);
             b->SetConst("foobar");
-            res.reset(b);
+            return b;
         }
         break;
         
     case BroadcastType::Bytes:
     default:
-        res.reset(new Broadcaster<TimestampFactory>(port, timeout));
-        
+        return new Broadcaster<TimestampFactory>(port, timeout);
     }
-    return res;
+    return nullptr;
 }
 
 
@@ -116,4 +125,28 @@ int PrintHelp(char *argv0)
     std::cout << "  -f               Broadcast \"foobar\" string instead of timestamp" << std::endl;
     
     return EXIT_SUCCESS;
+}
+
+
+
+void SIGUSR1_handler(int)
+{
+    std::cout << "SIGUSR1 handled" << std::endl;
+    if (broadcaster->IsRunning()) broadcaster->Stop();
+    else broadcaster->Run();
+}
+
+
+void SIGUSR2_handler(int)
+{
+    std::cout << "SIGUSR2 handled" << std::endl;
+    broadcaster->Stop();
+    exit(EXIT_SUCCESS);
+}
+
+
+void atexit_handler() 
+{
+    std::cout << "atexit_handler" << std::endl;
+    delete broadcaster;
 }

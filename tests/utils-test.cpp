@@ -150,7 +150,7 @@ TEST(UtilsTest, UDPSendTest)
         packet.SetData(str.c_str(), str.size());
         
         SockAddr addr(SockAddr::Type::ANY, 12345);
-        auto len = UDP::SendTo(socket, addr, packet);
+        auto len = UDP::SendTo(socket, addr, &packet);
         EXPECT_EQ (packet.Size(), str.size());
         EXPECT_EQ (len, packet.Size());
     }
