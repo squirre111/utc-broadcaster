@@ -43,7 +43,9 @@ bash build_and_test.sh
 │       └── system_clock.h  Функции работы со временем
 │
 ├── tests
-│   ├── utils-test.cpp      Unit-тесты проекта
+│   ├── utils-test.cpp      Unit-тесты вспомогательных классов
+│   ├── broadcast-test.cpp  Unit-тесты процесса передачи
+│   ├── reciever-test.cpp   Unit-тесты вывода reciever
 │   └── main.cpp
 │
 ├── lib
