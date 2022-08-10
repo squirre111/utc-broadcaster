@@ -33,20 +33,14 @@ int main(int argc, char **argv)
     type = BroadcastType::Bytes;
     
     int opt = 0;
-    while ( (opt = getopt(argc, argv, "p:t:hbsf")) != -1){
+    while ( (opt = getopt(argc, argv, "p:t:hbsf")) != -1) {
         switch (opt) {
-        case 'p':
-            port = std::atoi(optarg); break;
-        case 't':
-            timeout = std::atoi(optarg); break;
-        case 'b':
-            type = BroadcastType::Bytes; break;
-        case 's':
-            type = BroadcastType::String; break;
-        case 'f':
-            type = BroadcastType::Foobar; break;
-        case 'h':
-            return PrintHelp(argv[0]);
+        case 'p': port = std::atoi(optarg); break;
+        case 't': timeout = std::atoi(optarg); break;
+        case 'b': type = BroadcastType::Bytes; break;
+        case 's': type = BroadcastType::String; break;
+        case 'f': type = BroadcastType::Foobar; break;
+        case 'h': return PrintHelp(argv[0]);
         }
     }
     
@@ -56,13 +50,13 @@ int main(int argc, char **argv)
     std::cout << "Broadcast port: " << port << std::endl;
     std::cout << "Broadcast timeout: " << timeout << std::endl;
     std::cout << "Broadcast type: " << BroadcastType2String(type) << std::endl;
-
+    
     broadcaster = BroadcastFactory(type, port, timeout);
-
+    
     std::atexit(atexit_handler);
     std::signal(SIGUSR1, SIGUSR1_handler);
     std::signal(SIGUSR2, SIGUSR2_handler);
-
+    
     std::cout << "Broadcast start!" << std::endl;
     broadcaster->Run();
     

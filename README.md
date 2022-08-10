@@ -52,21 +52,28 @@ bash build_and_test.sh
 └── doc                     Задание и изображения
 ```
 
-## Запуск
+## Запуск и остановка
 
-Запуск `Broadcaster`
+Запуск `broadcaster`
 
 ```
 ./build/src/broadcaster/broadcaster
 ```
 
-Запуск `Reciever`
+Запуск `reciever`
 
 ```
 ./build/src/reciever/reciever
 ```
 
 ![Пример работы](https://github.com/squirre111/utc-broadcaster/raw/main/doc/demo.gif)
+
+## Сигналы ОС
+
+Приложение `broadcaster` поддерживает возможность остановки и возобновления отправки по сигналам операционной системы:
+
+- **SIGUSR1** - останавливает либо возобновляет отправку датаграмм
+- **SIGUSR2** - корректно завершает работу приложения
 
 
 ## Опции командной строки
