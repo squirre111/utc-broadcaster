@@ -35,3 +35,36 @@ TEST(BroadcastTest, TransmitTest)
     EXPECT_GE(diff, 100);
     EXPECT_LT(diff, 110);
 }
+
+
+
+TEST(BroadcastTest, CycleTransmitTest)
+{
+    size_t port = 12345;
+    Broadcaster<TimestampFactory> b(port, 100);
+    Reciever r(port);
+    FixedPacket<sizeof(SystemClock::ms_size)> packet;
+    
+    size_t count_packets = 0;
+    std::atomic<bool> t1_run{true};
+
+    std::thread t1([&] {
+            while(t1_run) {
+                if (r.GetPacket(&packet)) {
+                    count_packets++;
+                }
+            }
+        });
+    
+    b.Run();
+    SystemClock::SleepMS(1000);
+    b.Stop();
+    
+    t1_run = false;
+    b.Broadcast(); // dirty hack to unblock recvfrom
+    
+    t1.join();
+    
+    EXPECT_GE(count_packets, 10);
+    EXPECT_LT(count_packets, 12);
+}
