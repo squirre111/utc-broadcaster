@@ -66,7 +66,6 @@ public:
     void Broadcast() const {
         auto packet = T::BuildPacket();
         SendPacket(packet.get());
-        SystemClock::SleepMS(1800);
     }
 
     /** Отправка произвольного пакета */
