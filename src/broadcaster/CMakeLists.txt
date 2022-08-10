@@ -15,3 +15,5 @@ add_library(${BINARY}_lib STATIC ${SOURCES})
 
 target_link_libraries(${BINARY}_lib utils_lib )
 
+target_include_directories(${BINARY}_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
