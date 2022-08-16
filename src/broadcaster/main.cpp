@@ -48,12 +48,12 @@ int main(int argc, char **argv)
     
     std::unique_ptr<Runnable> broadcaster(BroadcastFactory(type, port, timeout));
 
-#if(_POSIX_THREADS)    
     // Block SIGUSR1 and SIGUSR2, so other threads
     // will inherit a copy of the signal mask
     sigset_t set;
     sigemptyset(&set);
     sigaddset(&set, SIGUSR1); sigaddset(&set, SIGUSR2);
+#if(_POSIX_THREADS)    
     int res = pthread_sigmask(SIG_BLOCK, &set, NULL);
     if (res != 0) std::cerr << "pthread_sigmask error " << res << std::endl;
 #else
