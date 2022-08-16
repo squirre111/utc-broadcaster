@@ -25,7 +25,7 @@ public:
             if (GetPacket(&packet)) {
                 auto currentMs = SystemClock::GetMS();
                 auto packetMs = TimestampFactory::ParsePacket(&packet);
-                std::cout << PrintDiff(packetMs, currentMs) << std::endl;
+                std::cout << PrintDiff(currentMs, packetMs) << std::endl;
             }
 
         }

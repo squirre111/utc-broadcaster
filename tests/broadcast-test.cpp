@@ -48,9 +48,13 @@ TEST(BroadcastTest, CycleTransmitTest)
     size_t count_packets = 0;
     std::atomic<bool> t1_run{true};
 
+
     std::thread t1([&] {
             while(t1_run) {
                 if (r.GetPacket(&packet)) {
+                    auto currentMs = SystemClock::GetMS();
+                    auto packetMs = TimestampFactory::ParsePacket(&packet);
+                    EXPECT_GE(currentMs, packetMs);
                     count_packets++;
                 }
             }
