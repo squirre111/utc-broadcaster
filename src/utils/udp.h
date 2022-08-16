@@ -17,8 +17,14 @@ namespace UDP {
         /** Включение опции широковещательной передачи на сокете */
         void AllowBroadcast();
 
+        /** Включение опции переиспользования порта для bind */
+        void AllowReusePort();
+
         /** Проверка наличия опции широковещательной передачи на сокете */
         bool HasBroadcast() const;
+
+        /** Проверка наличия опции переиспользования порта для bind */
+        bool HasReusePort() const;
 
         /** Дескриптор сокета */
         int FD() const;
@@ -30,7 +36,17 @@ namespace UDP {
         bool Bind(SockAddr &sa);
         
     private:
+        
+        /** Установка абстрактной опции */
+        template<typename T>
+        void SetSockOption(int optname, const T val);
+        
+        /** Считывание абстрактной опции */
+        template<typename T>
+        bool GetSockOption(int optname, T *val) const;
+        
         int fd_;
+        
     };
 
     /** Отправка данных по UDP */

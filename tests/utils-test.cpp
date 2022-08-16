@@ -34,8 +34,6 @@ TEST(UtilsTest, UdpSockTest)
         UDP::Socket sock1;
         EXPECT_GT (sock1.FD(),  STDERR_FILENO);
         EXPECT_EQ (sock1.HasBroadcast(),  false);
-        sock1.AllowBroadcast();
-        EXPECT_EQ (sock1.HasBroadcast(),  true);
         auto sock1_fd_saved = sock1.FD();
         
         UDP::Socket sock2;
@@ -50,13 +48,36 @@ TEST(UtilsTest, UdpSockTest)
 }
 
 
+
 TEST(UtilsTest, BindTest)
 {
     {
-        UDP::Socket socket;
-        SockAddr addr(SockAddr::Type::ANY, 12345);
-        EXPECT_EQ (socket.Bind(addr), true);
-        EXPECT_EQ (socket.Bind(addr), false); // again
+        UDP::Socket socket1;
+        SockAddr addr1(SockAddr::Type::ANY, 12345);
+        EXPECT_EQ (socket1.Bind(addr1), true);
+        EXPECT_EQ (socket1.Bind(addr1), false); // double bind test
+    }
+    {
+        // without reuse
+        UDP::Socket socket1;
+        SockAddr addr1(SockAddr::Type::ANY, 12345);
+        EXPECT_EQ (socket1.Bind(addr1), true);
+        
+        UDP::Socket socket2;
+        SockAddr addr2(SockAddr::Type::ANY, 12345);
+        EXPECT_EQ (socket2.Bind(addr2), false);
+    }
+    {
+        // with reuse
+        UDP::Socket socket1;
+        SockAddr addr1(SockAddr::Type::ANY, 12345);
+        socket1.AllowReusePort();
+        EXPECT_EQ (socket1.Bind(addr1), true);
+        
+        UDP::Socket socket2;
+        SockAddr addr2(SockAddr::Type::ANY, 12345);
+        socket2.AllowReusePort();
+        EXPECT_EQ (socket2.Bind(addr2), true);
     }
 }
 

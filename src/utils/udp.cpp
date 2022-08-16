@@ -8,27 +8,55 @@
 #define MAX_UDP_SIZE 1500
 
 
+#include <iostream>
+
 UDP::Socket::Socket() : fd_(0)
 {
-    fd_ = socket(AF_INET, SOCK_DGRAM, 0);
+    fd_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 }
 
 
 void UDP::Socket::AllowBroadcast()
 {
-    const int on = 1;
-    setsockopt(fd_, SOL_SOCKET, SO_BROADCAST, &on, sizeof(on));
+    SetSockOption(SO_BROADCAST, 1);
+}
+
+
+void UDP::Socket::AllowReusePort()
+{
+    SetSockOption(SO_REUSEPORT, 1);
 }
 
 
 bool UDP::Socket::HasBroadcast() const
 {
+    int val;
+    auto res = GetSockOption(SO_BROADCAST, &val);
+    if (!res) return false;
+    return val;
+}
+
+
+bool UDP::Socket::HasReusePort() const
+{
+    int val;
+    auto res = GetSockOption(SO_REUSEPORT, &val);
+    if (!res) return false;
+    return val;
+}
+
+
+template<typename T>
+void UDP::Socket::SetSockOption(int optname, const T val) {
+    setsockopt(fd_, SOL_SOCKET, optname, &val, sizeof(T));
+}
+
+
+template<typename T>
+bool UDP::Socket::GetSockOption(int optname, T *val) const {
     socklen_t optlen;
-    int on;
-    int rv = getsockopt(fd_, SOL_SOCKET, SO_BROADCAST, &on, &optlen);
-    if (rv != 0)
-        return false;
-    return on;
+    int rv = getsockopt(fd_, SOL_SOCKET, optname, val, &optlen);
+    return sizeof(T) == optlen && rv == 0;
 }
 
 
@@ -39,7 +67,10 @@ int UDP::Socket::FD() const
 
 
 void UDP::Socket::Close() {
-    close(fd_);
+    if (fd_ != -1) {
+        close(fd_);
+        fd_ = -1;
+    }
 }
 
 

@@ -13,7 +13,10 @@ public:
         addr_(SockAddr::Type::ANY, port),
         sock_()
     {
-        sock_.Bind(addr_);
+        auto res = sock_.Bind(addr_);
+        if (!res) {
+            std::cerr << "Reciever::Reciever() bind error" << std::endl;
+        }
     }
     
     /** Функция для вызова из main(), основной обработчик */
