@@ -59,8 +59,9 @@ int main(int argc, char **argv)
     
     std::cout << "Broadcast start!" << std::endl;
     broadcaster->Run();
-    
-    while(1);
+   
+    while(1)
+        pause();
     
     return EXIT_SUCCESS;
 }
