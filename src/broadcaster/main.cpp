@@ -16,11 +16,6 @@ enum class BroadcastType {
 Runnable *BroadcastFactory(BroadcastType type, int port, int timeout);
 std::string BroadcastType2String(BroadcastType type);
 int PrintHelp(char *argv0);
-
-void SIGUSR1_handler(int);
-void SIGUSR2_handler(int);
-void atexit_handler();
-
 Runnable *broadcaster = nullptr;
 
 int main(int argc, char **argv)
@@ -43,7 +38,7 @@ int main(int argc, char **argv)
         case 'h': return PrintHelp(argv[0]);
         }
     }
-    
+   
     if (port == 0 || port > 65535) port = DEFAULT_PORT;
     if (timeout == 0) timeout = DEFAULT_TIMEOUT;
 
@@ -51,18 +46,38 @@ int main(int argc, char **argv)
     std::cout << "Broadcast timeout: " << timeout << std::endl;
     std::cout << "Broadcast type: " << BroadcastType2String(type) << std::endl;
     
-    broadcaster = BroadcastFactory(type, port, timeout);
+    std::unique_ptr<Runnable> broadcaster(BroadcastFactory(type, port, timeout));
     
-    std::atexit(atexit_handler);
-    std::signal(SIGUSR1, SIGUSR1_handler);
-    std::signal(SIGUSR2, SIGUSR2_handler);
+    // Block SIGUSR1 and SIGUSR2, so other threads
+    // will inherit a copy of the signal mask
+    sigset_t set;
+    sigemptyset(&set);
+    sigaddset(&set, SIGUSR1); sigaddset(&set, SIGUSR2);
+    int res = pthread_sigmask(SIG_BLOCK, &set, NULL);
+    if (res != 0) std::cerr << "pthread_sigmask error " << res << std::endl;
     
     std::cout << "Broadcast start!" << std::endl;
     broadcaster->Run();
-   
-    while(1)
-        pause();
-    
+
+    int sig;
+    while(1) {
+        res = sigwait(&set, &sig);
+        if (res != 0)
+            std::cerr << "sigwait error " << res << std::endl;
+        else if (sig == SIGUSR1) {
+            std::cout << "SIGUSR1 handled" << std::endl;
+            if (broadcaster->IsRunning()) 
+                broadcaster->Stop();
+            else
+                broadcaster->Run();
+        }
+        else if (sig == SIGUSR2) {
+            std::cout << "SIGUSR2 handled" << std::endl;
+            broadcaster->Stop();
+            break;
+        }
+    }
+
     return EXIT_SUCCESS;
 }
 
@@ -122,22 +137,6 @@ int PrintHelp(char *argv0)
     return EXIT_SUCCESS;
 }
 
-
-
-void SIGUSR1_handler(int)
-{
-    std::cout << "SIGUSR1 handled" << std::endl;
-    if (broadcaster->IsRunning()) broadcaster->Stop();
-    else broadcaster->Run();
-}
-
-
-void SIGUSR2_handler(int)
-{
-    std::cout << "SIGUSR2 handled" << std::endl;
-    broadcaster->Stop();
-    exit(EXIT_SUCCESS);
-}
 
 
 void atexit_handler() 
